@@ -2,4 +2,3 @@ streamlit
 pandas
 numpy
 scikit-learn
-pillow==10.4.0
