@@ -5,92 +5,110 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import time
 
-# 1. Konfigurasi Halaman (Premium & Wide)
-st.set_page_config(page_title="Prediksi Kualitas Air Minum", page_icon="💧", layout="wide")
+# 1. Konfigurasi Halaman & Desain Premium Pro
+st.set_page_config(page_title="Water Quality AI Pro", page_icon="💧", layout="wide")
 
-# 2. INJEKSI CSS KUSTOM (Tema Cerah Premium + Animasi Bergerak)
+# 2. INJEKSI CSS KUSTOM (Tema Premium + Animasi)
 st.markdown("""
     <style>
-    /* Latar belakang cerah dengan gradasi lembut, tidak putih polos */
-    .stApp {
-        background: linear-gradient(135deg, #eef2f3 0%, #8e9eab 100%);
-        color: #2c3e50;
-    }
-    
-    /* ANIMASI BERGERAK PADA JUDUL (Animated Gradient) */
-    @keyframes gradient-animation {
+    /* 1. Latar Belakang Gradasi Animasi (Lembut & Elegan) */
+    @keyframes gradientBG {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
     
-    .animated-title {
-        font-size: 2.8rem !important;
-        font-weight: 800 !important;
-        background: linear-gradient(-45deg, #00c6ff, #0072ff, #3a7bd5, #3a6073);
+    .stApp {
+        background: linear-gradient(-45deg, #e0f2f1, #b2dfdb, #e8f5e9, #b2dfdb);
         background-size: 400% 400%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: gradient-animation 8s ease infinite;
-        margin-bottom: 5px;
+        animation: gradientBG 10s ease infinite;
     }
     
-    /* Kustomisasi Sidebar Cerah */
+    /* 2. Kustomisasi Sidebar */
     [data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 2px solid #dcdde1;
+        background-color: #ffffff;
+        border-right: 1px solid #dcdde1;
+        border-radius: 0 20px 20px 0;
     }
     
-    /* Desain Tab Cerah Modern */
+    /* 3. Desain Tabs Modern */
     .stTabs [data-baseweb="tab"] {
-        color: #7f8c8d !important;
+        color: #7f8c8d;
         font-weight: 600;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
     }
     .stTabs [aria-selected="true"] {
-        color: #0072ff !important;
-        border-bottom-color: #0072ff !important;
+        color: #00897b;
+        border-bottom-color: #00897b;
     }
     
-    /* Tombol Prediksi Interaktif dengan Efek Transisi Glow */
+    /* 4. Kustomisasi Judul Utama (Animated Gradient Text) */
+    @keyframes gradientTitle {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-title {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(-45deg, #00897b, #00c853, #26c6da, #00897b);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientTitle 5s ease infinite;
+        margin-bottom: 0px;
+    }
+    
+    /* 5. Tombol Prediksi Interaktif (Pulsing Effect on Hover) */
     .stButton>button {
-        background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
+        background: linear-gradient(90deg, #00897b, #00c853) !important;
         color: white !important;
         border: none !important;
-        padding: 14px 28px !important;
-        font-size: 1.1rem !important;
+        padding: 15px 30px !important;
+        font-size: 1.2rem !important;
         font-weight: bold !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
-        transition: all 0.3s ease-in-out;
+        border-radius: 15px !important;
+        box-shadow: 0 4px 15px rgba(0, 137, 123, 0.4);
+        transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 6px 25px rgba(0, 114, 255, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 137, 123, 0.6);
     }
     
-    /* Kartu Hasil Kelayakan (Cerah & Berbayang Lembut) */
-    .card-success {
-        background-color: #ffffff;
-        border-left: 8px solid #2ecc71;
+    /* 6. Kartu Hasil Kelayakan (Animated Success/Danger) */
+    @keyframes resultPop {
+        0% { transform: scale(0.9); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .result-card-success {
+        background: rgba(0, 200, 83, 0.1);
+        border: 2px solid #00c853;
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(46, 204, 113, 0.15);
-        margin-top: 15px;
+        border-radius: 20px;
+        color: #00c853;
+        font-weight: bold;
+        box-shadow: 0 0 20px rgba(0, 200, 83, 0.2);
+        animation: resultPop 0.5s ease;
+    }
+    .result-card-danger {
+        background: rgba(229, 57, 53, 0.1);
+        border: 2px solid #e53935;
+        padding: 20px;
+        border-radius: 20px;
+        color: #e53935;
+        font-weight: bold;
+        box-shadow: 0 0 20px rgba(229, 57, 53, 0.2);
+        animation: resultPop 0.5s ease;
     }
     
-    .card-danger {
-        background-color: #ffffff;
-        border-left: 8px solid #e74c3c;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(231, 76, 60, 0.15);
-        margin-top: 15px;
-    }
+    /* Hilangkan Watermark Streamlit */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Load Data & Latih Model AI (Cached)
+# 3. Load Data, Latih Model, & Hitung Akurasi (Cached)
 @st.cache_resource
 def latih_model_baru():
     data_air = pd.read_csv('water_potability.csv').dropna()
@@ -108,19 +126,88 @@ def latih_model_baru():
 
 model_ai, akurasi = latih_model_baru()
 
-# 4. Sidebar Menu Cerah & Bersih
+# 4. Sidebar Pro (Modern)
 with st.sidebar:
     st.markdown("<br>", unsafe_allow_html=True)
-    st.image("https://img.icons8.com/fluent/96/000000/water-droplet.png", width=70)
-    st.markdown("### ⚙️ Engine AI")
+    # Ikon Visual Tetesan Air Ganti URL Ikon
+    st.image("https://img.icons8.com/fluent/96/000000/water-droplet.png", width=80)
+    st.markdown("### ⚙️ Engine AI Pro")
     st.metric(label="Akurasi Model Penguji", value=f"{akurasi:.2f}%")
     st.divider()
-    st.info("Model dilatih menggunakan metode otomatis berbasis algoritma **Gradient Boosting**.")
-    st.caption("Lab Eksperimental Kualitas Air v3.5")
+    st.info("Sistem menganalisis 9 matriks kimiawi untuk menentukan kelayakan sampel air secara presisi.")
+    st.caption("Lab Eksperimental v4.0 Pro Animated")
 
-# 5. Header Utama dengan Animasi Judul Berjalan
+# 5. Header Utama (Didesain Kustom)
+# st.title("💧 Prediksi Kualitas Air Minum") # Ini standar
 st.markdown('<h1 class="animated-title">💧 Prediksi Kualitas Air Minum</h1>', unsafe_allow_html=True)
-st.markdown("<p style='font-size:1.1rem; color:#34495e;'>Sistem Cerdas Analisis Baku Mutu dan Kelayakan Sampel Air Laboratorium</p>", unsafe_allow_html=True)
+st.caption("Analisis Baku Mutu Sampel Laboratorium Berbasis Arsitektur Gradient Boosting")
 st.divider()
 
-# 6. Kontainer Input Parameter (Dibagi dalam
+# 6. Panel Input Berbasis TABS (Organized UI)
+st.markdown("### 📊 Parameter Hasil Uji Laboratorium")
+tab1, tab2 = st.tabs(["🧪 Parameter Kimia Inti", "🔬 Sifat Fisika & Tambahan"])
+
+with tab1:
+    col1, col2 = st.columns(2)
+    with col1:
+        ph = st.slider("Derajat Keasaman (pH)", 0.0, 14.0, 7.0, 0.1)
+        hardness = st.number_input("Tingkat Kekerasan Air (Hardness - mg/L)", min_value=0.0, value=180.0)
+    with col2:
+        chloramines = st.number_input("Kandungan Kloramin (Chloramines - ppm)", min_value=0.0, value=7.0)
+        sulfate = st.number_input("Kandungan Sulfat (Sulfate - mg/L)", min_value=0.0, value=300.0)
+
+with tab2:
+    col3, col4 = st.columns(2)
+    with col3:
+        solids = st.number_input("Total Padatan Terlarut (Solids - ppm)", min_value=0.0, value=20000.0)
+        conductivity = st.number_input("Daya Hantar Listrik (Conductivity - μS/cm)", min_value=0.0, value=400.0)
+    with col4:
+        organic_carbon = st.number_input("Karbon Organik (Organic Carbon - ppm)", min_value=0.0, value=15.0)
+        trihalomethanes = st.number_input("Zat Trihalometana (ppm)", min_value=0.0, value=60.0)
+        
+    st.divider()
+    turbidity = st.slider("Tingkat Kekeruhan (Turbidity - NTU)", 0.0, 10.0, 4.0, 0.1)
+
+# Fitur Tambahan: Analisis Status pH Langsung (Real-time Feed)
+st.markdown("<br>", unsafe_allow_html=True)
+if ph < 6.5:
+    st.warning("⚠️ **Catatan Laboratorium:** Sifat air cenderung **Asam** (Di bawah standar ideal 6.5 - 8.5).")
+elif ph > 8.5:
+    st.warning("⚠️ **Catatan Laboratorium:** Sifat air cenderung **Basa** (Di atas standar ideal 6.5 - 8.5).")
+else:
+    st.success("💡 **Catatan Laboratorium:** Tingkat keasaman (pH) berada di rentang **Ideal/Netral**.")
+
+# 7. Tombol Prediksi Interaktif
+st.markdown("<br><br>", unsafe_allow_html=True)
+if st.button("🚀 MULAI ANALISIS AI", type="primary"):
+    
+    # Animasi Loading
+    with st.spinner("Sistem sedang memproses parameter laboratorium..."):
+        time.sleep(1.5)
+        
+    # Memproses Data untuk Prediksi
+    data_input = pd.DataFrame([[ph, hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity]],
+                              columns=['ph', 'Hardness', 'Solids', 'Chloramines', 'Sulfate', 'Conductivity', 'Organic_carbon', 'Trihalomethanes', 'Turbidity'])
+
+    data_input = data_input[model_ai.feature_names_in_]
+    hasil_prediksi = model_ai.predict(data_input)[0]
+
+    st.divider()
+    st.markdown("### 📋 Hasil Laporan Akhir:")
+    
+    # Tampilan Output yang Dipercantik (Menggunakan HTML Card + Animasi CSS)
+    if hasil_prediksi == 1:
+        st.markdown("""
+            <div class="result-card-success">
+                <h2 style='color: #00c853; margin-top:0;'>✨ REKOMENDASI: AIR LAYAK DIKONSUMSI (POTABLE) ✨</h2>
+                <p style='color: #2c3e50; font-size: 1.1rem;'>Berdasarkan analisis algoritma cerdas, parameter sampel air berada dalam batas aman baku mutu kesehatan. Air memenuhi syarat untuk dikonsumsi langsung.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        st.balloons()
+    else:
+        st.markdown("""
+            <div class="result-card-danger">
+                <h2 style='color: #e53935; margin-top:0;'>❌ REKOMENDASI: AIR BERBAHAYA (NON-POTABLE) ❌</h2>
+                <p style='color: #2c3e50; font-size: 1.1rem;'>Perhatian! Parameter kimia terdeteksi di luar ambang batas aman. Dilarang mengonsumsi air ini sebelum dilakukan filtrasi atau penanganan ulang secara intensif.</p>
+            </div>
+            """, unsafe_allow_html=True)
